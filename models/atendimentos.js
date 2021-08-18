@@ -45,5 +45,56 @@ class Atendimento{
 
         
     }
+    listar(res){
+        const sql = 'SELECT * FROM Atendimentos';
+        conection.query(sql, (error, resultados)=>{
+            if(error){
+                res.status(400).json(error)
+            }
+            else{
+                res.status(200).json(resultados);
+            }
+        });
+    }
+    buscarPorId(id, res){
+        const sql = `SELECT * FROM Atendimentos WHERE id=${id}`;
+        conection.query(sql, (error, resultados) =>{
+
+            const atendimento = resultados[0]
+            if(error){
+                res.status(400).json(error)
+            }
+            else{
+                res.status(200).json(atendimento)
+            }
+        })
+    }
+    alterar(id, valores, res){
+        if(valores.data){
+            valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+        }
+        const sql = 'UPDATE Atendimentos SET ? WHERE id=?';
+
+        conection.query(sql,[valores, id], (error, resultados) =>{
+            if(error){
+                res.status(400).json(error)
+            }
+            else{
+                res.status(200).json({...valores, id})
+            }
+        })
+    }
+    deleta(id, res){
+        const sql = `DELETE FROM Atendimentos WHERE id=${id}`;
+
+        conection.query(sql, (error, resultados) =>{
+            if(error){
+                res.status(400).json(error);
+            }
+            else{   
+                res.status(200).json('Atendimento deletado com sucesso')
+            }
+        })
+    }
 }
 module.exports = new Atendimento;
